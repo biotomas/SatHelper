@@ -1,3 +1,4 @@
+#!/bin/env python
 # The task is to solve a logical puzzle called Einstein's puzzle
 # also known as the Zebra Puzzle (https://en.wikipedia.org/wiki/Zebra_Puzzle)
 #
@@ -22,8 +23,7 @@
 # (14) The Norwegian lives next to the blue house.
 # (15) The Blend smoker has a neighbor who drinks water.
 
-import sathelper
-sh = sathelper.SatHelper()
+from SatHelper import sh
 
 # From the hints we can extract the following categories and values
 houses = ["h1","h2","h3","h4","h5"]
