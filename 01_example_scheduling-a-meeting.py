@@ -1,4 +1,5 @@
-# The task is to schedule a meeting of four 
+#!/bin/env python
+# The task is to schedule a meeting of four
 # friends: Adam, Bridget, Charles, and Darren
 # under the following constraints:
 # * Adam can only meet on Monday or Wednesday
@@ -7,9 +8,8 @@
 # * Darren can only meet on Thursday or Friday
 
 
-# First, we import and initialize the sat helper class.
-import sathelper
-sh = sathelper.SatHelper()
+# First, we import the initialized sat helper class.
+from SatHelper import sh
 
 # Next, we declare the Boolean variables in this problem.
 # In this case one Boolean variable for each day of week.
