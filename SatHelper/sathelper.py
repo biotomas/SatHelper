@@ -1,8 +1,13 @@
+import subprocess
+import sys
+
 class SatHelper:
     nextIntId = 1
     variableIntMap = {}
     intVariableMap = {}
     clauses = []
+    softClauses = []
+    softClauseTotalWeight = 0
 
     def declareVariable(self, name):
         self.variableIntMap.update({name:self.nextIntId})
@@ -46,13 +51,23 @@ class SatHelper:
         else:
             return name
 
-    def addClause(self, args):
+    def literalsToIntString(self, args):
         clause = ""
         for arg in args:
             clause += str(self.literalToInt(arg))+" "
         clause += "0"
-        self.clauses.append(clause)
+        return clause
+
+    def addClause(self, literals):
+        self.clauses.append(self.literalsToIntString(literals))
+
+    def addSoftClause(self, literals):
+        self.addWeightedSoftClause(1, literals)
         
+    def addWeightedSoftClause(self, weight, literals):
+        self.softClauseTotalWeight += weight
+        self.softClauses.append(str(weight) + " " + self.literalsToIntString(literals))
+           
     def addImplies(self, arg1, arg2):
         self.addClause([self.getNegated(arg1), arg2])
 
@@ -74,6 +89,42 @@ class SatHelper:
         for clause in self.clauses:
             print(clause)
             
+    def printMaxSatFormula(self):
+        hardClauseWeight = self.softClauseTotalWeight + 1
+        print("p wcnf", self.nextIntId-1, len(self.clauses)+len(self.softClauses), hardClauseWeight)
+        for clause in self.clauses:
+            print(hardClauseWeight, clause)
+        for softClause in self.softClauses:
+            print(softClause)
+            
+    def solveSat(self):
+        original_stdout = sys.stdout
+        with open('formula.cnf', 'w') as f:
+            sys.stdout = f
+            self.printFormula()
+            sys.stdout = original_stdout # Reset the standard output to its original value
+            
+        p = subprocess.run(["./glucose", "-model", "formula.cnf"], stdout=subprocess.PIPE, universal_newlines=True)
+        solution = list(filter(lambda line: line.startswith("s "), p.stdout.splitlines()))[0][2:]
+        print("The formula is", solution)
+        if solution == "SATISFIABLE":
+            values = list(filter(lambda line: line.startswith("v "), p.stdout.splitlines()))[0][2:]
+            self.printTrueVariables(values)
+            
+    def solveMaxSat(self):
+        original_stdout = sys.stdout
+        with open('formula.cnf', 'w') as f:
+            sys.stdout = f
+            self.printMaxSatFormula()
+            sys.stdout = original_stdout # Reset the standard output to its original value
+            
+        p = subprocess.run(["./open-wbo", "formula.cnf"], stdout=subprocess.PIPE, universal_newlines=True)
+        solution = list(filter(lambda line: line.startswith("s "), p.stdout.splitlines()))[0][2:]
+        print("The result is", solution)
+        if solution == "OPTIMUM FOUND":
+            values = list(filter(lambda line: line.startswith("v "), p.stdout.splitlines()))[0][2:]
+            self.printTrueVariablesCompact(values)
+            
     def printClauseToForceDifferentSolution(self, solution):
         otherSolClause = ""
         for svalue in solution.split(" "):
@@ -83,7 +134,15 @@ class SatHelper:
         print(otherSolClause + "0")
 
     def printTrueVariables(self, solution):
+        print("The following variables are assigned the value True:")
         for svalue in solution.split(" "):
             value = int(svalue)
             if (value > 0):
                 print(self.intToVariable(value))
+                
+    def printTrueVariablesCompact(self, solution):
+        print("The following variables are assigned the value True:")
+        for index in range(len(solution)):
+            if (solution[index] == "1"):
+                print(self.intToVariable(index+1))
+

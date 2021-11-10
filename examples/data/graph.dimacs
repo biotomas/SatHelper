@@ -1,0 +1,16 @@
+c This is a small example graph in the DIMACS format.
+c Lines starting with "c" are comments and can be ignored
+c by the solver.
+c A line starting with "p edge" is used to declare the number
+c of vertices and edges.
+c Lines starting with "e" give the edges of the graph.
+c The following graph has 5 vertices (1,2,3,4,5) and 7
+c edges (1-2, 1-4, 2-4, 2-5, 3-4, 3-5, 4-5).
+p edge 5 7
+e 1 2
+e 1 4
+e 2 4
+e 2 5
+e 3 4
+e 3 5
+e 4 5

@@ -43,3 +43,8 @@ sh.addAtMostOne(["mo","tu","we","th","fr"])
 
 # Finally, we print the formula
 sh.printFormula()
+
+# If a SAT solver named 'glucose' is located in the current folder
+# then the following command will use it to solve the formula and
+# print the result.
+#sh.solveSat()
