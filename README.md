@@ -15,6 +15,13 @@ Install
 pip install .
 ```
 
+or (without downloading)
+```bash
+pip install git+https://github.com/biotomas/SatHelper
+```
+
+
+
 Usage
 =====
 
