@@ -127,11 +127,20 @@ for house in houses:
     sh.addClause(addPrefix(house, nationality))
 
 # each color/drink/cigarettes/... is assigned to at most one house
-for x in colors: sh.addAtMostOne(["h1,"+x,"h2,"+x,"h3,"+x,"h4,"+x,"h5,"+x])
-for x in nationality: sh.addAtMostOne(["h1,"+x,"h2,"+x,"h3,"+x,"h4,"+x,"h5,"+x])
-for x in cigarettes: sh.addAtMostOne(["h1,"+x,"h2,"+x,"h3,"+x,"h4,"+x,"h5,"+x])
-for x in drink: sh.addAtMostOne(["h1,"+x,"h2,"+x,"h3,"+x,"h4,"+x,"h5,"+x])
-for x in pet: sh.addAtMostOne(["h1,"+x,"h2,"+x,"h3,"+x,"h4,"+x,"h5,"+x])
+for x in colors:
+    sh.addAtMostOne(["h1,"+x,"h2,"+x,"h3,"+x,"h4,"+x,"h5,"+x])
+
+for x in nationality:
+    sh.addAtMostOne(["h1,"+x,"h2,"+x,"h3,"+x,"h4,"+x,"h5,"+x])
+
+for x in cigarettes:
+    sh.addAtMostOne(["h1,"+x,"h2,"+x,"h3,"+x,"h4,"+x,"h5,"+x])
+
+for x in drink:
+    sh.addAtMostOne(["h1,"+x,"h2,"+x,"h3,"+x,"h4,"+x,"h5,"+x])
+
+for x in pet:
+    sh.addAtMostOne(["h1,"+x,"h2,"+x,"h3,"+x,"h4,"+x,"h5,"+x])
 
 # print the formula for the SAT solver
 sh.printFormula()
@@ -140,4 +149,3 @@ sh.printFormula()
 # then the following command will use it to solve the formula and
 # print the result.
 #sh.solveSat()
-
