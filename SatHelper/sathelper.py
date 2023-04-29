@@ -168,3 +168,11 @@ class SatHelper:
             if (value > 0):
                 out.append(self.intToVariable(value))
         return out
+    
+    def clear(self):
+        self.nextIntId = 1
+        self.variableIntMap = {}
+        self.intVariableMap = {}
+        self.clauses = []
+        self.softClauses = []
+        self.softClauseTotalWeight = 0
