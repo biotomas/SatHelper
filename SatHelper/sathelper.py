@@ -146,3 +146,33 @@ class SatHelper:
             if (solution[index] == "1"):
                 print(self.intToVariable(index+1))
 
+    def solveAndReturnSat(self):
+        original_stdout = sys.stdout
+        with open('formula.cnf', 'w') as f:
+            sys.stdout = f
+            self.printFormula()
+            sys.stdout = original_stdout # Reset the standard output to its original value
+
+        p = subprocess.run(["./glucose", "-model", "formula.cnf"], stdout=subprocess.PIPE, universal_newlines=True)
+        solution = list(filter(lambda line: line.startswith("s "), p.stdout.splitlines()))[0][2:]
+        if solution == "SATISFIABLE":
+            values = list(filter(lambda line: line.startswith("v "), p.stdout.splitlines()))[0][2:]
+            return self.getTrueVariables(values)
+        else:
+            return None
+
+    def getTrueVariables(self, solution):
+        out = []
+        for svalue in solution.split(" "):
+            value = int(svalue)
+            if (value > 0):
+                out.append(self.intToVariable(value))
+        return out
+    
+    def clear(self):
+        self.nextIntId = 1
+        self.variableIntMap = {}
+        self.intVariableMap = {}
+        self.clauses = []
+        self.softClauses = []
+        self.softClauseTotalWeight = 0
