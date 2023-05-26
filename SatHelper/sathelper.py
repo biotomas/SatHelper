@@ -1,5 +1,6 @@
 import subprocess
 import sys
+import os
 
 class SatHelper:
     nextIntId = 1
@@ -99,31 +100,35 @@ class SatHelper:
             
     def solveSat(self):
         original_stdout = sys.stdout
-        with open('formula.cnf', 'w') as f:
+        fomulaFileName = str(os.getpid()) + ".cnf"
+        with open(fomulaFileName, 'w') as f:
             sys.stdout = f
             self.printFormula()
             sys.stdout = original_stdout # Reset the standard output to its original value
             
-        p = subprocess.run(["./glucose", "-model", "formula.cnf"], stdout=subprocess.PIPE, universal_newlines=True)
+        p = subprocess.run(["./glucose", "-model", fomulaFileName], stdout=subprocess.PIPE, universal_newlines=True)
         solution = list(filter(lambda line: line.startswith("s "), p.stdout.splitlines()))[0][2:]
         print("The formula is", solution)
         if solution == "SATISFIABLE":
             values = list(filter(lambda line: line.startswith("v "), p.stdout.splitlines()))[0][2:]
             self.printTrueVariables(values)
+        os.remove(fomulaFileName)
             
     def solveMaxSat(self):
         original_stdout = sys.stdout
-        with open('formula.cnf', 'w') as f:
+        fomulaFileName = str(os.getpid()) + ".cnf"
+        with open(fomulaFileName, 'w') as f:
             sys.stdout = f
             self.printMaxSatFormula()
             sys.stdout = original_stdout # Reset the standard output to its original value
             
-        p = subprocess.run(["./open-wbo", "formula.cnf"], stdout=subprocess.PIPE, universal_newlines=True)
+        p = subprocess.run(["./open-wbo", fomulaFileName], stdout=subprocess.PIPE, universal_newlines=True)
         solution = list(filter(lambda line: line.startswith("s "), p.stdout.splitlines()))[0][2:]
         print("The result is", solution)
         if solution == "OPTIMUM FOUND":
             values = list(filter(lambda line: line.startswith("v "), p.stdout.splitlines()))[0][2:]
             self.printTrueVariablesCompact(values)
+        os.remove(fomulaFileName)
             
     def printClauseToForceDifferentSolution(self, solution):
         otherSolClause = ""
